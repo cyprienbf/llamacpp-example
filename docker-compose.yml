@@ -1,0 +1,65 @@
+services:
+  convert:
+    dns: [ "8.8.8.8", "1.1.1.1" ]
+    image: ghcr.io/ggml-org/llama.cpp:full-cuda
+    volumes:
+      - ./models:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: 
+      - "--convert"
+      - "--outtype"
+      - "f16"
+      - "/models/Qwen3-4B-Thinking-2507"
+
+  quantize:
+    dns: [ "8.8.8.8", "1.1.1.1" ]
+    image: ghcr.io/ggml-org/llama.cpp:full-cuda
+    volumes:
+      - ./models:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command:
+      - "--quantize"
+      - "/models/Qwen3-4B-Thinking-2507/Qwen3-4B-Thinking-2507-F16.gguf"
+      - "/models/Qwen3-4B-Thinking-2507/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
+      - "Q4_K_M"
+
+  server:
+    dns: [ "8.8.8.8", "1.1.1.1" ]
+    image: ghcr.io/ggml-org/llama.cpp:full-cuda
+    container_name: llamacpp-server
+    restart: unless-stopped
+    volumes:
+      - ./models:/models
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command:
+      - "--server"
+      - "-m"
+      - "/models/Qwen3-4B-Thinking-2507/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
+      - "-c"
+      - "16384"
+      - "-ngl"
+      - "999"
+      - "--port"
+      - "8080"
+      - "--host"
+      - "0.0.0.0"
