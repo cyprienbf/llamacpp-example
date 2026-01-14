@@ -33,8 +33,6 @@ Before you begin, ensure you have the following software installed on your syste
 3.  **Access the server:**
     Once the script is finished, you can access the `llama.cpp` web server at [http://localhost:8080](http://localhost:8080).
 
-Of course. Here is a new section for your `README.md` that explains which model is being used and how to change it. You can place this section after the "Prerequisites" and before the "Usage" section.
-
 ## Model Used
 
 This example uses the `Qwen/Qwen3-4B-Thinking-2507` model from [Hugging Face](https://huggingface.co/Qwen/Qwen3-4B-Thinking-2507) by default.
